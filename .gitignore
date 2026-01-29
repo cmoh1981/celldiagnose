@@ -13,6 +13,11 @@ users.db
 CellDiagnose-AI.zip
 data/
 
+# Redundant checkpoints (keep only best models)
+checkpoints/classifier_latest.pth
+checkpoints/last.ckpt
+checkpoints/segmentation-epoch=*.ckpt
+
 # OS
 .DS_Store
 Thumbs.db
