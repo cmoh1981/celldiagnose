@@ -4,11 +4,33 @@ from datetime import datetime, timedelta
 import socket
 
 # Determine database path (support persistent storage on Hugging Face)
-DATA_DIR = "/data"
-if os.path.exists(DATA_DIR) and os.access(DATA_DIR, os.W_OK):
-    DB_PATH = os.path.join(DATA_DIR, "users.db")
-else:
-    DB_PATH = "users.db"
+def get_db_path():
+    """Find a writable location for the database."""
+    # Priority order: HF persistent storage > /tmp > home dir > current dir
+    candidates = [
+        "/data",  # HF persistent storage (if enabled)
+        "/tmp",   # Always writable in Docker
+        os.path.expanduser("~"),  # User home directory
+        "."  # Current directory (fallback)
+    ]
+
+    for path in candidates:
+        if os.path.exists(path) and os.access(path, os.W_OK):
+            db_path = os.path.join(path, "users.db")
+            # Test if we can actually create/open a file there
+            try:
+                test_path = os.path.join(path, ".db_test")
+                with open(test_path, 'w') as f:
+                    f.write("test")
+                os.remove(test_path)
+                return db_path
+            except:
+                continue
+
+    # Ultimate fallback
+    return "/tmp/users.db"
+
+DB_PATH = get_db_path()
 
 def init_db():
     """Initialize the SQLite database."""
