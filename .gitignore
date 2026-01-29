@@ -5,8 +5,8 @@ __pycache__/
 venv/
 .env
 
-# Streamlit
-.streamlit/
+# Streamlit (allow config.toml for deployment)
+# .streamlit/
 
 # Project Specific
 users.db

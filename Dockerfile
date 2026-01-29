@@ -33,11 +33,20 @@ COPY . .
 RUN useradd -m -u 1000 user
 USER user
 
-# Set environment variables
+# Set environment variables for Streamlit
 ENV HOME=/home/user \
     PATH=/home/user/.local/bin:$PATH \
     STREAMLIT_SERVER_PORT=7860 \
-    STREAMLIT_SERVER_ADDRESS=0.0.0.0
+    STREAMLIT_SERVER_ADDRESS=0.0.0.0 \
+    STREAMLIT_SERVER_HEADLESS=true \
+    STREAMLIT_SERVER_ENABLE_CORS=false \
+    STREAMLIT_SERVER_ENABLE_XSRF_PROTECTION=false \
+    STREAMLIT_BROWSER_GATHER_USAGE_STATS=false
+
+# Ensure .streamlit config is accessible
+RUN mkdir -p /home/user/.streamlit && \
+    cp -r .streamlit/* /home/user/.streamlit/ 2>/dev/null || true && \
+    chown -R user:user /home/user/.streamlit 2>/dev/null || true
 
 # Expose the port
 EXPOSE 7860
