@@ -76,8 +76,22 @@ st.markdown("""
         animation: none !important;
         transform: none !important;
     }
+
+    /* Prevent layout shifts */
+    .stProgress > div > div {
+        transition: none !important;
+    }
+
+    /* Stabilize metric cards */
+    [data-testid="stMetric"] {
+        min-height: 100px;
+    }
+
+    /* Fix column layout stability */
+    [data-testid="column"] {
+        min-width: 0;
+    }
 </style>
-""", unsafe_allow_html=True)
 """, unsafe_allow_html=True)
 
 
