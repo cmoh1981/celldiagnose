@@ -533,21 +533,22 @@ def render_enhanced_anomaly_section(enhanced_result: Dict, original_image: np.nd
     status_icon = "⚠️" if is_anomaly else "✅"
 
     st.markdown(f"""
-    <div style="background:linear-gradient(135deg, {color}22, {color}11);
+    <div style="background:{color}15;
                 border-left:4px solid {color};
                 border-radius:8px;
                 padding:1.5rem;
-                margin-bottom:1rem;">
-        <div style="display:flex;align-items:center;justify-content:space-between;">
-            <div>
+                margin-bottom:1rem;
+                min-height:80px;">
+        <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:nowrap;">
+            <div style="flex:1;min-width:0;">
                 <h3 style="margin:0;color:{color};font-size:1.5rem;">{status_icon} {status_text}</h3>
-                <p style="margin:0.5rem 0 0 0;color:#cbd5e1;font-weight:400;">
+                <p style="margin:0.5rem 0 0 0;color:#64748b;font-weight:400;">
                     Severity: <strong style="color:{color};">{severity.upper()}</strong> |
                     Score: {enhanced_result['anomaly_score']:.4f} |
                     Confidence: {enhanced_result['confidence']:.1%}
                 </p>
             </div>
-            <div style="text-align:right;">
+            <div style="text-align:right;flex-shrink:0;padding-left:1rem;">
                 <div style="font-size:2.5rem;font-weight:700;color:{color};">
                     {enhanced_result['normalized_score']:.1f}x
                 </div>
@@ -699,7 +700,7 @@ def render_export_section(results: Dict, image: np.ndarray):
 def render_welcome():
     """Render welcome screen."""
     st.markdown("""
-    <div style="text-align:center; padding:5rem 2rem; background:linear-gradient(135deg, #f8fafc 0%, #e2e8f0 100%); border-radius:30px; margin:2rem 0; box-shadow: inset 0 2px 10px rgba(0,0,0,0.02);">
+    <div style="text-align:center; padding:5rem 2rem; background:#f8fafc; border-radius:30px; margin:2rem 0; border:1px solid #e2e8f0;">
         <h2 style="color:#0f172a; font-size:2.8rem; margin-bottom:1rem; font-family:'Outfit', sans-serif;">Deep Learning Cell Diagnostics</h2>
         <p style="color:#64748b; font-size:1.3rem; max-width:700px; margin:0 auto; font-weight:300;">
             Upload your brightfield microscopy images to perform automated confluency measurement, 
