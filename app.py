@@ -43,53 +43,90 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# Professional CSS Styling
+# Professional CSS Styling - Anti-shake fix
 st.markdown("""
 <style>
-    /* Absolute stability: Force scrollbar and simple layout */
-    html, body, [data-testid="stAppViewContainer"] {
+    /* CRITICAL: Force stable viewport width */
+    html {
         overflow-y: scroll !important;
+        scrollbar-gutter: stable !important;
+    }
+
+    body, [data-testid="stAppViewContainer"], [data-testid="stApp"] {
         overflow-x: hidden !important;
+        width: 100% !important;
+        max-width: 100vw !important;
     }
 
     .main .block-container {
         padding: 2rem;
         max-width: 100%;
+        width: 100%;
+        box-sizing: border-box;
     }
 
-    /* Standardize Scrollbar */
+    /* Force scrollbar always visible */
     ::-webkit-scrollbar {
-        width: 10px;
+        width: 12px !important;
     }
     ::-webkit-scrollbar-track {
         background: #f1f5f9;
-        border-radius: 5px;
     }
     ::-webkit-scrollbar-thumb {
         background: #cbd5e1;
-        border-radius: 5px;
+        border-radius: 6px;
     }
 
-    /* Remove all custom transitions and animations */
-    * {
+    /* CRITICAL: Disable ALL animations and transitions */
+    *, *::before, *::after {
         transition: none !important;
         animation: none !important;
         transform: none !important;
+        scroll-behavior: auto !important;
     }
 
-    /* Prevent layout shifts */
+    /* Stabilize columns with fixed flex */
+    [data-testid="column"] {
+        min-width: 0 !important;
+        flex-shrink: 0 !important;
+        contain: layout style !important;
+    }
+
+    /* Stabilize horizontal blocks */
+    [data-testid="stHorizontalBlock"] {
+        flex-wrap: nowrap !important;
+        gap: 1rem !important;
+        contain: layout !important;
+    }
+
+    /* Fixed height for metrics to prevent reflow */
+    [data-testid="stMetric"] {
+        min-height: 90px !important;
+        contain: layout style !important;
+    }
+
+    [data-testid="stMetricValue"] {
+        min-height: 36px !important;
+    }
+
+    /* Stabilize expanders */
+    [data-testid="stExpander"] {
+        contain: layout style !important;
+    }
+
+    /* Prevent image reflow */
+    [data-testid="stImage"] {
+        contain: layout !important;
+    }
+
+    [data-testid="stImage"] img {
+        max-width: 100% !important;
+        height: auto !important;
+    }
+
+    /* Progress bar stability */
     .stProgress > div > div {
         transition: none !important;
-    }
-
-    /* Stabilize metric cards */
-    [data-testid="stMetric"] {
-        min-height: 100px;
-    }
-
-    /* Fix column layout stability */
-    [data-testid="column"] {
-        min-width: 0;
     }
 </style>
 """, unsafe_allow_html=True)
