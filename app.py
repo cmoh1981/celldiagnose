@@ -46,251 +46,38 @@ st.set_page_config(
 # Professional CSS Styling
 st.markdown("""
 <style>
-    /* Import Premium Fonts */
-    @import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Inter:wght@400;500;600&display=swap');
+    /* Absolute stability: Force scrollbar and simple layout */
+    html, body, [data-testid="stAppViewContainer"] {
+        overflow-y: scroll !important;
+        overflow-x: hidden !important;
+    }
 
-    /* Global styles */
     .main .block-container {
-        padding: 2rem 3rem;
-        max-width: 1400px;
-        font-family: 'Inter', sans-serif;
-    }
-
-    /* Modern Glassmorphism & Colors */
-    :root {
-        --primary: #2563eb;
-        --primary-gradient: linear-gradient(135deg, #3b82f6 0%, #1d4ed8 100%);
-        --success: #10b981;
-        --warning: #f59e0b;
-        --danger: #ef4444;
-        --bg-glass: rgba(255, 255, 255, 0.7);
-        --border-glass: rgba(255, 255, 255, 0.3);
-        --accent-blue: #eff6ff;
-    }
-
-    /* Typography */
-    h1, h2, h3, h4 {
-        font-family: 'Outfit', sans-serif;
-        font-weight: 600;
-        letter-spacing: -0.02em;
-    }
-
-    /* Glass Effect Utility */
-    .glass-card {
-        background: var(--bg-glass);
-        backdrop-filter: blur(12px);
-        -webkit-backdrop-filter: blur(12px);
-        border: 1px solid var(--border-glass);
-        border-radius: 16px;
-        box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.07);
-    }
-
-    /* Enhanced Main Header */
-    .main-header {
-        background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
-        color: white;
-        padding: 3rem 2rem;
-        border-radius: 20px;
-        margin-bottom: 2.5rem;
-        text-align: center;
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
-        position: relative;
-        overflow: hidden;
-    }
-    
-    .main-header::before {
-        content: "";
-        position: absolute;
-        top: -50%;
-        left: -50%;
-        width: 200%;
-        height: 200%;
-        background: radial-gradient(circle, rgba(59, 130, 246, 0.1) 0%, transparent 70%);
-        animation: rotate 20s linear infinite;
-    }
-    
-    @keyframes rotate {
-        from { transform: rotate(0deg); }
-        to { transform: rotate(360deg); }
-    }
-
-    .main-header h1 {
-        color: #ffffff !important;
-        margin: 0;
-        font-size: 3.2rem;
-        font-weight: 700;
-        text-shadow: 0 2px 10px rgba(0,0,0,0.3);
-    }
-
-    .main-header p {
-        color: #e2e8f0 !important; /* Brightened from #94a3b8 */
-        margin: 0.75rem 0 0 0;
-        font-size: 1.25rem;
-        font-weight: 400;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-
-    /* Enhanced Report Header */
-    .report-header {
-        background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%);
-        color: white;
         padding: 2rem;
-        border-radius: 16px;
-        margin-bottom: 2rem;
-        border: 1px solid rgba(255,255,255,0.1);
-        box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+        max-width: 100%;
     }
 
-    .report-header h2 {
-        color: #ffffff !important;
-        margin: 0;
-    }
-
-    .report-header p {
-        color: #cbd5e1 !important;
-        margin: 0.5rem 0 0 0;
-        font-size: 1.1rem;
-    }
-
-    /* Dashboard Metrics */
-    .metric-card {
-        padding: 1.75rem;
-        border-radius: 16px;
-        background: white;
-        border: 1px solid #f1f5f9;
-        box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.05);
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        height: 100%;
-    }
-
-    .metric-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-    }
-
-    .metric-title {
-        font-size: 0.875rem;
-        font-weight: 600;
-        color: #64748b;
-        text-transform: uppercase;
-        letter-spacing: 0.05em;
-        margin-bottom: 0.5rem;
-    }
-
-    .metric-value {
-        font-size: 2.25rem;
-        font-weight: 700;
-        color: #0f172a;
-        margin-bottom: 0.25rem;
-    }
-
-    /* Status Badges */
-    .status-badge {
-        padding: 0.5rem 1rem;
-        border-radius: 10px;
-        font-size: 0.9rem;
-        font-weight: 600;
-        display: inline-flex;
-        align-items: center;
-        gap: 0.5rem;
-    }
-
-    /* Image Display Group */
-    .image-group {
-        background: #fdfdfd;
-        border-radius: 20px;
-        padding: 1.5rem;
-        border: 1px solid #f1f5f9;
-        margin-top: 1rem;
-    }
-
-    /* Modern Sidebar */
-    [data-testid="stSidebar"] {
-        background: #f8fafc;
-        border-right: 1px solid #e2e8f0;
-    }
-    
-    [data-testid="stSidebar"] .stMarkdown p,
-    [data-testid="stSidebar"] .stMarkdown h1,
-    [data-testid="stSidebar"] .stMarkdown h2,
-    [data-testid="stSidebar"] .stMarkdown h3,
-    [data-testid="stSidebar"] label,
-    [data-testid="stSidebar"] .stSelectbox label,
-    [data-testid="stSidebar"] .stSlider label {
-        color: #0f172a !important;
-        font-weight: 500;
-    }
-
-    /* File Uploader visibility */
-    [data-testid="stFileUploadDropzone"] {
-        background: white;
-        border: 2px dashed #e2e8f0;
-    }
-    
-    [data-testid="stFileUploadDropzone"] p {
-        color: #475569 !important;
-    }
-    
-    /* Caption and Helper Text */
-    [data-testid="stSidebar"] .stCaption,
-    [data-testid="stSidebar"] small {
-        color: #64748b !important;
-    }
-
-    /* Custom Buttons - Primary Blue */
-    .stButton > button {
-        background: var(--primary-gradient);
-        color: white;
-        border: none;
-        padding: 0.8rem 2.5rem;
-        font-weight: 600;
-        font-size: 1.1rem;
-        border-radius: 12px;
-        transition: all 0.3s;
-        width: 100%;
-        box-shadow: 0 4px 12px rgba(37, 99, 235, 0.2);
-    }
-
-    .stButton > button:hover {
-        transform: scale(1.02);
-        box-shadow: 0 6px 20px rgba(37, 99, 235, 0.4);
-        background: var(--primary-gradient);
-        color: white;
-    }
-
-    /* Expander Styling */
-    .streamlit-expanderHeader p {
-        color: #0f172a !important;
-        font-weight: 600 !important;
-    }
-    
-    .streamlit-expanderHeader {
-        background: white;
-        border-radius: 12px !important;
-        border: 1px solid #e2e8f0 !important;
-    }
-
-    /* Button Text Visibility */
-    .stButton > button {
-        color: #ffffff !important;
-        text-shadow: 0 1px 2px rgba(0,0,0,0.2);
-    }
-
-    /* Scrollbar */
+    /* Standardize Scrollbar */
     ::-webkit-scrollbar {
-        width: 8px;
+        width: 10px;
     }
     ::-webkit-scrollbar-track {
         background: #f1f5f9;
+        border-radius: 5px;
     }
     ::-webkit-scrollbar-thumb {
         background: #cbd5e1;
-        border-radius: 10px;
+        border-radius: 5px;
     }
-    ::-webkit-scrollbar-thumb:hover {
-        background: #94a3b8;
+
+    /* Remove all custom transitions and animations */
+    * {
+        transition: none !important;
+        animation: none !important;
+        transform: none !important;
     }
 </style>
+""", unsafe_allow_html=True)
 """, unsafe_allow_html=True)
 
 
@@ -320,12 +107,9 @@ def init_session_state():
 
 def render_header():
     """Render application header."""
-    st.markdown("""
-    <div class="main-header">
-        <h1>🔬 CellDiagnose-AI</h1>
-        <p>Automated diagnostic analysis for brightfield cell microscopy</p>
-    </div>
-    """, unsafe_allow_html=True)
+    st.title("🔬 CellDiagnose-AI")
+    st.markdown("_Automated diagnostic analysis for brightfield cell microscopy_")
+    st.markdown("---")
 
 
 def render_sidebar() -> Dict[str, Any]:
@@ -571,20 +355,14 @@ def render_image_analysis(original: np.ndarray, overlay: np.ndarray, mask: np.nd
     col1, col2, col3 = st.columns(3)
 
     with col1:
-        st.markdown('<div class="image-group">', unsafe_allow_html=True)
         st.image(original, caption="Original Image", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with col2:
-        st.markdown('<div class="image-group">', unsafe_allow_html=True)
         st.image(overlay, caption="Segmentation Overlay", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
     with col3:
-        st.markdown('<div class="image-group">', unsafe_allow_html=True)
         mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
         st.image(mask_rgb, caption="AI Generated Mask", use_container_width=True)
-        st.markdown('</div>', unsafe_allow_html=True)
 
 
 def render_diagnostic_report(results: Dict, config: Dict):
@@ -615,66 +393,28 @@ def render_diagnostic_report(results: Dict, config: Dict):
 
     with col1:
         confluency = summary['confluency']['percentage']
-        status_color = "#10b981" if 30 <= confluency <= 90 else "#f59e0b"
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Confluency</div>
-            <div class="metric-value">{confluency:.1f}%</div>
-            <div class="status-badge" style="background:{status_color}15; color:{status_color};">
-                {"Optimal" if 30 <= confluency <= 90 else "Review Required"}
-            </div>
-            <p style="margin-top:0.5rem; color:#64748b; font-size:0.8rem;">Est. {summary['confluency']['cell_count']} cells</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Confluency", f"{confluency:.1f}%")
+        st.caption(f"Est. {summary['confluency']['cell_count']} cells")
 
     with col2:
         cell_type = classification['cell_type']
         confidence = classification['cell_type_confidence']
-        cell_info = get_cell_type_info(cell_type)
-
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Cell Type</div>
-            <div class="metric-value" style="font-size:1.75rem;">{cell_type}</div>
-            <div class="status-badge" style="background:#eff6ff; color:#2563eb;">
-                AI Predicted
-            </div>
-            <p style="margin-top:0.5rem; color:#64748b; font-size:0.8rem;">{cell_info['description']}</p>
-            {f'<p style="margin:0.25rem 0 0 0;color:#3b82f6;font-size:0.75rem;font-weight:600;">{confidence:.1%} Confidence</p>' if config['show_confidence'] else ''}
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Cell Type", cell_type)
+        if config['show_confidence']:
+            st.caption(f"{confidence:.1%} Confidence")
 
     with col3:
         health = classification['health_status']
         health_conf = classification['health_confidence']
-        h_color = "#10b981" if health == 'Healthy' else "#ef4444"
-
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Health Status</div>
-            <div class="metric-value">{health}</div>
-            <div class="status-badge" style="background:{h_color}15; color:{h_color};">
-                {health.upper()}
-            </div>
-            {f'<p style="margin:0.5rem 0 0 0;color:#64748b;font-size:0.75rem;">{health_conf:.1%} Confidence</p>' if config['show_confidence'] else ''}
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Health Status", health)
+        if config['show_confidence']:
+            st.caption(f"{health_conf:.1%} Confidence")
 
     with col4:
         contaminated = summary['contamination']['is_contaminated']
         cont_status = "Negative" if not contaminated else "Positive"
-        c_color = "#10b981" if not contaminated else "#ef4444"
-
-        st.markdown(f"""
-        <div class="metric-card">
-            <div class="metric-title">Contamination</div>
-            <div class="metric-value">{cont_status}</div>
-            <div class="status-badge" style="background:{c_color}15; color:{c_color};">
-                {cont_status.upper()}
-            </div>
-            <p style="margin-top:0.5rem; color:#64748b; font-size:0.8rem;">Score: {summary['contamination']['score']:.3f}</p>
-        </div>
-        """, unsafe_allow_html=True)
+        st.metric("Contamination", cont_status)
+        st.caption(f"Anomaly Score: {summary['contamination']['score']:.3f}")
 
     st.markdown("---")
 
@@ -1001,20 +741,24 @@ def main():
     if config['uploaded_file'] is not None:
         image = ImagePreprocessor.load_image(config['uploaded_file'])
 
+        # Run analysis only when button is pressed (one-shot)
         if config['run_analysis']:
             with st.spinner("Running analysis..."):
                 results = run_analysis_pipeline(image, config)
                 st.session_state.results = results
                 st.session_state.analysis_complete = True
+                st.session_state.current_filename = config['uploaded_file'].name
 
-                # Add to history
-                st.session_state.history.append({
-                    'timestamp': datetime.now(),
-                    'filename': config['uploaded_file'].name,
-                    'cell_type': results['classification']['cell_type'],
-                    'confluency': results['summary']['confluency']['percentage']
-                })
+                # Add to history (guarded to prevent duplicates)
+                if not st.session_state.history or st.session_state.history[-1].get('filename') != config['uploaded_file'].name:
+                    st.session_state.history.append({
+                        'timestamp': datetime.now(),
+                        'filename': config['uploaded_file'].name,
+                        'cell_type': results['classification']['cell_type'],
+                        'confluency': results['summary']['confluency']['percentage']
+                    })
 
+        # Display results if analysis is complete for this file
         if st.session_state.analysis_complete and st.session_state.results:
             results = st.session_state.results
 
@@ -1030,6 +774,10 @@ def main():
             st.image(image, caption="Uploaded Image", use_container_width=True)
             st.info("👆 Click 'Run Analysis' in the sidebar to begin.")
     else:
+        # Clear results if no file uploaded
+        if st.session_state.analysis_complete:
+            st.session_state.analysis_complete = False
+            st.session_state.results = None
         render_welcome()
 
 

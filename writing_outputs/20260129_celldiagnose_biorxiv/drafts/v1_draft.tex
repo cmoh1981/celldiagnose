@@ -30,7 +30,7 @@
 
 % Abstract
 \begin{abstract}
-Automated analysis of cell microscopy images is essential for high-throughput biological research, yet existing tools often require specialized imaging modalities or manual intervention. Here we present CellDiagnose-AI, an integrated deep learning pipeline for automated cell type classification, segmentation, and anomaly detection in standard brightfield microscopy images. Our system combines an EfficientNet-B3 classifier achieving 99.64\% accuracy across 13 cell types, a U-Net segmentation model with 90.95\% Dice coefficient for confluency measurement, and an autoencoder-based anomaly detector for contamination screening. Trained on over 7,400 images from diverse public datasets including LIVECell and BBBC, CellDiagnose-AI provides a unified, accessible solution for routine cell culture quality control. The complete system is deployed as an open-source web application, enabling researchers without computational expertise to perform comprehensive cell diagnostics. Our results demonstrate that transfer learning with modern architectures can achieve expert-level cell classification from low-contrast brightfield images, potentially accelerating biological research workflows.
+Automated analysis of cell microscopy images supports high-throughput biological research, but many existing tools require fluorescence imaging or manual annotation. We developed CellDiagnose-AI, a deep learning pipeline that performs cell type classification, segmentation, and anomaly detection from standard brightfield microscopy images. The system uses an EfficientNet-B3 classifier (99.64\% accuracy across 13 cell types), a U-Net segmentation model (90.95\% Dice coefficient), and an autoencoder-based anomaly detector for contamination screening. We trained these models on 7,400+ images from public datasets (LIVECell, BBBC). The pipeline is deployed as an open-source web application where users can upload images and receive diagnostic reports without programming. Transfer learning from ImageNet proved sufficient to distinguish cell types from low-contrast brightfield images, suggesting this approach could reduce manual inspection in routine cell culture workflows.
 
 \textbf{Keywords:} deep learning, cell classification, microscopy, EfficientNet, U-Net, anomaly detection, cell culture
 \end{abstract}
@@ -39,20 +39,20 @@ Automated analysis of cell microscopy images is essential for high-throughput bi
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../figures/figure_01_graphical_abstract.pdf}
-\caption{\textbf{CellDiagnose-AI Pipeline Overview.} The integrated deep learning system processes brightfield microscopy images through three parallel analysis pathways: EfficientNet-B3 for cell type classification (99.64\% accuracy across 13 cell types), U-Net with ResNet-34 encoder for segmentation and confluency measurement (90.95\% Dice coefficient), and a convolutional autoencoder for anomaly detection. Results are combined into a comprehensive diagnostic report.}
+\caption{\textbf{CellDiagnose-AI Pipeline Overview.} The system processes brightfield microscopy images through three pathways: EfficientNet-B3 for cell type classification (99.64\% accuracy, 13 cell types), U-Net with ResNet-34 encoder for segmentation and confluency measurement (90.95\% Dice coefficient), and a convolutional autoencoder for anomaly detection. Outputs are combined into a diagnostic report.}
 \label{fig:graphical_abstract}
 \end{figure}
 
 % Introduction
 \section{Introduction}
 
-Light microscopy remains the most widely accessible imaging modality in biological laboratories, enabling real-time observation of cell cultures without specialized equipment or staining protocols \citep{edlund2021livecell}. However, manual analysis of microscopy images is time-consuming, subjective, and prone to inter-observer variability. As cell-based assays become increasingly central to drug discovery, toxicology, and regenerative medicine, there is growing demand for automated tools that can rapidly and accurately assess cell identity and health status.
+Light microscopy is the most common imaging method in cell biology laboratories because it allows direct observation without staining or specialized optics \citep{edlund2021livecell}. However, manual image analysis takes considerable time and shows variability between observers. Cell-based assays are now widely used in drug discovery, toxicology, and regenerative medicine, creating a need for automated tools that can identify cell types and assess culture health.
 
-Deep learning has transformed biomedical image analysis, with convolutional neural networks (CNNs) achieving human-level performance in tasks ranging from pathology diagnosis to cell segmentation \citep{ronneberger2015unet, hormann2024cellvit}. The U-Net architecture, introduced by \citet{ronneberger2015unet}, established the encoder-decoder paradigm that remains foundational for biomedical segmentation. More recently, EfficientNet \citep{tan2019efficientnet} demonstrated that carefully balanced scaling of network depth, width, and resolution yields superior accuracy with fewer parameters, making it attractive for deployment in resource-constrained settings.
+Convolutional neural networks (CNNs) have achieved strong performance on biomedical image analysis tasks including pathology diagnosis and cell segmentation \citep{ronneberger2015unet, hormann2024cellvit}. The U-Net architecture \citep{ronneberger2015unet} uses an encoder-decoder design with skip connections that preserves spatial information during segmentation. EfficientNet \citep{tan2019efficientnet} showed that coordinated scaling of network depth, width, and resolution improves accuracy while reducing parameters, which helps when computational resources are limited.
 
-Despite these advances, most existing cell analysis tools focus on single tasks---either classification or segmentation---and often require fluorescent markers or phase-contrast imaging \citep{amitay2023cellsighter, ma2024cellsam}. Furthermore, quality control for contamination detection typically relies on manual inspection or separate specialized assays. An integrated pipeline that performs multi-task analysis on standard brightfield images would significantly streamline laboratory workflows.
+Current cell analysis tools typically address single tasks (classification or segmentation) and often require fluorescent markers or phase-contrast imaging \citep{amitay2023cellsighter, ma2024cellsam}. Quality control for contamination usually relies on visual inspection or separate assays. A single pipeline handling multiple tasks from brightfield images would simplify laboratory workflows.
 
-Here we present CellDiagnose-AI, a unified deep learning system that performs three complementary analyses from a single brightfield microscopy image: (1) cell type classification across 13 common cell lines, (2) instance-aware segmentation for confluency measurement and cell counting, and (3) anomaly detection for identifying contamination, dead cells, and culture stress. We demonstrate that our pipeline achieves state-of-the-art classification accuracy while maintaining practical inference speed, and we provide the complete system as an open-source web application for broad accessibility.
+We developed CellDiagnose-AI, a system that performs three analyses from one brightfield microscopy image: (1) classification across 13 cell types, (2) segmentation for confluency measurement and cell counting, and (3) anomaly detection for contamination and dead cells. The system achieves high classification accuracy with practical inference speed. We release it as an open-source web application.
 
 % Methods
 \section{Methods}
@@ -65,34 +65,34 @@ For segmentation, we utilized 3,440 image-mask pairs from LIVECell, which provid
 
 \subsection{Classification Model}
 
-We employed EfficientNet-B3 \citep{tan2019efficientnet} pretrained on ImageNet as our classification backbone. The architecture uses compound scaling to balance network depth (1.2$\times$), width (1.1$\times$), and resolution (300$\times$300 pixels). We replaced the final classification layer with a two-stage head: a 512-dimensional fully connected layer with dropout (0.3), followed by a 13-class softmax output. Training used AdamW optimizer (learning rate $10^{-4}$, weight decay $10^{-5}$) with cosine annealing over 50 epochs. Data augmentation included random horizontal/vertical flips, rotation ($\pm$15\textdegree), brightness/contrast adjustment, and Gaussian blur.
+We used EfficientNet-B3 \citep{tan2019efficientnet} pretrained on ImageNet as the classification backbone. This architecture applies compound scaling with depth multiplier 1.2, width multiplier 1.1, and input resolution 300$\times$300 pixels. We replaced the final layer with a 512-dimensional fully connected layer (dropout 0.3) followed by a 13-class softmax output. Training used AdamW (learning rate $10^{-4}$, weight decay $10^{-5}$) with cosine annealing over 50 epochs. Data augmentation included horizontal/vertical flips, rotation ($\pm$15\textdegree), brightness/contrast adjustment, and Gaussian blur.
 
 \subsection{Segmentation Model}
 
-For cell segmentation, we implemented a U-Net architecture \citep{ronneberger2015unet} with a ResNet-34 encoder pretrained on ImageNet \citep{he2016resnet}. The encoder-decoder structure with skip connections enables precise localization while leveraging transfer learning for robust feature extraction. The decoder uses transposed convolutions to upsample feature maps, producing a binary segmentation mask at 512$\times$512 resolution. We trained with a combined loss function: $\mathcal{L} = \mathcal{L}_{BCE} + \mathcal{L}_{Dice}$, where binary cross-entropy addresses pixel-wise accuracy and Dice loss optimizes overlap. Training proceeded for 30 epochs using AdamW (learning rate $3 \times 10^{-4}$) with early stopping based on validation Dice coefficient.
+For segmentation, we used U-Net \citep{ronneberger2015unet} with a ResNet-34 encoder pretrained on ImageNet \citep{he2016resnet}. Skip connections between encoder and decoder preserve spatial information. The decoder uses transposed convolutions to produce a binary mask at 512$\times$512 resolution. We trained with combined loss $\mathcal{L} = \mathcal{L}_{BCE} + \mathcal{L}_{Dice}$, where binary cross-entropy handles pixel-wise accuracy and Dice loss optimizes region overlap. Training ran for 30 epochs using AdamW (learning rate $3 \times 10^{-4}$) with early stopping based on validation Dice coefficient.
 
 \subsection{Anomaly Detection}
 
-To detect contamination, dead cells, and other culture abnormalities, we implemented a convolutional autoencoder trained exclusively on healthy cell images. The encoder compresses input images (128$\times$128$\times$3) through five convolutional blocks to a 256-dimensional latent representation, while the decoder reconstructs the original image via transposed convolutions. During inference, reconstruction error (mean squared error) serves as an anomaly score---healthy cells produce low reconstruction error, while abnormalities yield elevated scores due to out-of-distribution features. We established severity thresholds empirically from a validation set containing known contaminated samples.
+To detect contamination, dead cells, and other abnormalities, we trained a convolutional autoencoder on healthy cell images only. The encoder compresses 128$\times$128$\times$3 inputs through five convolutional blocks to a 256-dimensional latent space; the decoder reconstructs the image via transposed convolutions. At inference, reconstruction error (mean squared error) serves as an anomaly score---healthy cells show low error, while abnormalities show higher error because they differ from training examples. We set severity thresholds using a validation set with known contaminated samples.
 
 % Architecture Figure
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../figures/figure_02_architectures.pdf}
-\caption{\textbf{Model Architectures.} (A) EfficientNet-B3 classifier with compound-scaled MBConv blocks, global average pooling, and fully connected layers for 13-class cell type prediction. (B) U-Net segmentation model with ResNet-34 encoder, skip connections for spatial detail preservation, and decoder for pixel-wise mask generation. (C) Convolutional autoencoder for anomaly detection, trained on healthy cells to identify deviations via reconstruction error.}
+\caption{\textbf{Model Architectures.} (A) EfficientNet-B3 classifier with compound-scaled MBConv blocks, global average pooling, and fully connected layers for 13-class prediction. (B) U-Net with ResNet-34 encoder; skip connections preserve spatial detail for pixel-wise mask generation. (C) Convolutional autoencoder trained on healthy cells; anomalies produce higher reconstruction error.}
 \label{fig:architectures}
 \end{figure}
 
 \subsection{Implementation and Deployment}
 
-All models were implemented in PyTorch 2.0+ using the segmentation-models-pytorch library for U-Net. Training utilized NVIDIA GPUs with mixed-precision (FP16) to accelerate computation. The complete inference pipeline runs on both CPU and GPU, with the three models totaling approximately 41 million parameters (EfficientNet-B3: 11.5M, U-Net+ResNet-34: 24.4M, Autoencoder: 5M). We deployed the system as a Streamlit web application on Hugging Face Spaces, providing a user-friendly interface for image upload and comprehensive diagnostic reports.
+All models were implemented in PyTorch 2.0+ using segmentation-models-pytorch for U-Net. Training used NVIDIA GPUs with mixed-precision (FP16). The inference pipeline runs on both CPU and GPU. The three models total approximately 41 million parameters (EfficientNet-B3: 11.5M, U-Net+ResNet-34: 24.4M, Autoencoder: 5M). We deployed the system as a Streamlit web application on Hugging Face Spaces, where users can upload images and receive diagnostic reports.
 
 % Results
 \section{Results}
 
 \subsection{Classification Performance}
 
-The EfficientNet-B3 classifier achieved 99.64\% overall accuracy and 99.92\% balanced accuracy on the held-out test set (n=1,097 images), demonstrating robust performance across all 13 cell types (Table~\ref{tab:classification}). Per-class recall exceeded 99\% for 11 of 13 classes, with the lowest performance observed for morphologically similar breast cancer lines (BT474: 98.7\%, SkBr3: 99.1\%). Inference time averaged 45 milliseconds per image on GPU (NVIDIA RTX 3080) and 320 milliseconds on CPU.
+The EfficientNet-B3 classifier achieved 99.64\% overall accuracy and 99.92\% balanced accuracy on the test set (n=1,097 images) across all 13 cell types (Table~\ref{tab:classification}). Per-class recall exceeded 99\% for 11 of 13 classes. The two lowest-performing classes were BT474 (98.7\% recall) and SkBr3 (99.1\% recall), both breast cancer lines with similar morphology. Inference averaged 45 ms per image on GPU (NVIDIA RTX 3080) and 320 ms on CPU.
 
 \begin{table}[ht]
 \centering
@@ -125,52 +125,52 @@ U373 & 0.997 & 0.997 & 0.997 & 84 \\
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../figures/figure_03_classification_results.pdf}
-\caption{\textbf{Classification Performance.} (A) Per-class F1 scores across all 13 cell types, with mean F1 of 0.997 indicated. All classes exceed the 99\% threshold except BT474 and SkBr3 (morphologically similar breast cancer lines). (B) Precision-recall scatter plot colored by cell category, demonstrating consistent high performance across diverse morphologies. Overall accuracy: 99.64\%, balanced accuracy: 99.92\%.}
+\caption{\textbf{Classification Performance.} (A) Per-class F1 scores across 13 cell types (mean F1 = 0.997). All classes exceed 99\% except BT474 and SkBr3, which are morphologically similar breast cancer lines. (B) Precision-recall scatter plot by cell category. Overall accuracy: 99.64\%, balanced accuracy: 99.92\%.}
 \label{fig:classification}
 \end{figure}
 
 \subsection{Segmentation Performance}
 
-The U-Net segmentation model achieved a Dice coefficient of 0.9095 and Intersection over Union (IoU) of 0.834 on the LIVECell validation set. Performance was consistent across cell types with varying morphologies, from elongated SHSY5Y neuroblastoma cells to compact MCF7 clusters. The model accurately delineated individual cell boundaries even at high confluence ($>$80\%), enabling reliable cell counting through connected component analysis. Processing a 512$\times$512 image required 62 milliseconds on GPU.
+The U-Net model achieved a Dice coefficient of 0.9095 and IoU of 0.834 on the LIVECell validation set. Performance was similar across cell types with different morphologies, from elongated SHSY5Y neuroblastoma cells to compact MCF7 clusters. The model delineated cell boundaries at high confluence ($>$80\%), and connected component analysis provided cell counts. Processing a 512$\times$512 image took 62 ms on GPU.
 
 \subsection{Anomaly Detection}
 
-The autoencoder-based anomaly detector successfully identified simulated contamination scenarios, including bacterial contamination, mycoplasma-like particles, and debris. On a curated validation set, the system achieved 94.2\% sensitivity for detecting abnormal cultures while maintaining 97.8\% specificity for healthy samples. Reconstruction error thresholds were calibrated to provide three severity levels: ``Normal'' ($<$0.03), ``Caution'' (0.03--0.07), and ``Alert'' ($>$0.07).
+The autoencoder-based detector identified simulated contamination scenarios including bacterial contamination, mycoplasma-like particles, and debris. On a validation set with known anomalies, the system achieved 94.2\% sensitivity for abnormal cultures and 97.8\% specificity for healthy samples. Reconstruction error thresholds define three severity levels: ``Normal'' ($<$0.03), ``Caution'' (0.03--0.07), and ``Alert'' ($>$0.07).
 
 % Segmentation and Anomaly Figure
 \begin{figure}[ht]
 \centering
 \includegraphics[width=\textwidth]{../figures/figure_04_segmentation_anomaly.pdf}
-\caption{\textbf{Segmentation and Anomaly Detection.} (A) Segmentation performance comparison showing U-Net achieves superior Dice coefficient (0.91) and IoU (0.83) compared to traditional thresholding methods. (B) Anomaly detection severity classification based on autoencoder reconstruction error (MSE), with thresholds calibrated for Normal ($<$0.03), Caution (0.03--0.07), and Alert ($>$0.07) levels.}
+\caption{\textbf{Segmentation and Anomaly Detection.} (A) U-Net segmentation (Dice = 0.91, IoU = 0.83) compared with thresholding baselines. (B) Anomaly detection thresholds based on autoencoder reconstruction error (MSE): Normal ($<$0.03), Caution (0.03--0.07), Alert ($>$0.07).}
 \label{fig:segmentation_anomaly}
 \end{figure}
 
 \subsection{Integrated Pipeline}
 
-The complete CellDiagnose-AI pipeline processes a single image in under 500 milliseconds (GPU) or 2 seconds (CPU), generating a comprehensive diagnostic report including: cell type identification with confidence scores, segmentation mask overlay, confluency percentage, estimated cell count, health status assessment, and specific recommendations. The web interface provides an intuitive workflow for non-computational users, requiring only image upload to receive full analysis.
+The full pipeline processes one image in under 500 ms (GPU) or 2 s (CPU). The output report includes: cell type with confidence score, segmentation mask overlay, confluency percentage, estimated cell count, health status, and recommendations. Users upload images through the web interface and receive results without writing code.
 
 % Discussion
 \section{Discussion}
 
-We have presented CellDiagnose-AI, an integrated deep learning pipeline that achieves expert-level cell type classification from standard brightfield microscopy images while simultaneously providing segmentation-based morphometrics and anomaly screening. The 99.64\% classification accuracy across 13 diverse cell types demonstrates that modern CNN architectures with transfer learning can extract discriminative features from low-contrast brightfield images without specialized staining or phase-contrast optics.
+CellDiagnose-AI classifies cell types from brightfield microscopy images with 99.64\% accuracy across 13 cell types, while also providing segmentation for confluency measurement and anomaly detection for contamination screening. The high classification accuracy indicates that CNNs with ImageNet pretraining can learn discriminative features from low-contrast brightfield images without staining or phase-contrast optics.
 
-Our results align with recent advances showing that carefully designed architectures outperform generic models for cell analysis tasks \citep{wang2024cellotype, amitay2023cellsighter}. The EfficientNet-B3 backbone provides an effective balance of accuracy and computational efficiency, enabling deployment on standard laboratory computers without dedicated GPU hardware. The U-Net segmentation component, while not achieving the performance of recent foundation models like CellSAM \citep{ma2024cellsam}, provides reliable confluency measurement suitable for routine quality control applications.
+These results are consistent with other work showing that task-specific architectures perform well on cell analysis \citep{wang2024cellotype, amitay2023cellsighter}. EfficientNet-B3 balances accuracy and efficiency, running on standard computers without dedicated GPUs. The U-Net segmentation does not match recent foundation models like CellSAM \citep{ma2024cellsam}, but provides confluency measurements adequate for routine quality control.
 
-The autoencoder-based anomaly detection represents a practical approach to contamination screening that requires no labeled contamination examples during training---a significant advantage given the rarity and diversity of culture abnormalities. By learning the distribution of healthy cells, the model can flag deviations without exhaustive enumeration of failure modes \citep{bauer2024autoencoder, rehn2025artifact}.
+The autoencoder-based anomaly detection does not require labeled contamination examples during training, which is useful because contamination events are rare and variable. The model learns what healthy cells look like and flags deviations \citep{bauer2024autoencoder, rehn2025artifact}.
 
-Several limitations should be acknowledged. First, our classification model was trained on a curated set of 13 cell types; performance on novel cell lines or primary cultures remains to be validated. Second, the segmentation model was optimized for phase-contrast images from LIVECell; adaptation to pure brightfield may require domain-specific fine-tuning. Third, the anomaly detector provides binary healthy/abnormal assessments without specific contamination identification.
+Several limitations apply. First, we trained on 13 cell types; accuracy on other cell lines or primary cultures is unknown. Second, the segmentation model was trained on phase-contrast images from LIVECell, so performance on pure brightfield images may differ. Third, the anomaly detector identifies abnormalities but does not classify contamination types.
 
-Future work will expand the cell type library through active learning, incorporate uncertainty quantification for out-of-distribution detection, and explore foundation model architectures for improved generalization. We anticipate that CellDiagnose-AI and similar integrated tools will accelerate biological research by reducing manual inspection burden while maintaining rigorous quality standards.
+Future work could expand the cell type library, add uncertainty quantification for out-of-distribution samples, and test foundation model architectures for better generalization.
 
 % Data and Code Availability
 \section*{Data and Code Availability}
 
-CellDiagnose-AI is available as an open-source project. The web application is deployed at \url{https://huggingface.co/spaces/cmoh1981/CellDiagnose-AI}. Training utilized publicly available datasets: LIVECell \citep{edlund2021livecell} and BBBC \citep{ljosa2012bbbc}.
+CellDiagnose-AI is open-source. The web application runs at \url{https://huggingface.co/spaces/cmoh1981/CellDiagnose-AI}. Training data came from LIVECell \citep{edlund2021livecell} and BBBC \citep{ljosa2012bbbc}.
 
 % Acknowledgments
 \section*{Acknowledgments}
 
-We thank the creators of the LIVECell, BBBC, and Image Data Resource datasets for making high-quality annotated microscopy images publicly available.
+We thank the creators of the LIVECell, BBBC, and Image Data Resource datasets for making annotated microscopy images available.
 
 % References
 \bibliographystyle{plainnat}
