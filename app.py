@@ -403,17 +403,17 @@ def render_image_analysis(original: np.ndarray, overlay: np.ndarray, mask: np.nd
     </div>
     """, unsafe_allow_html=True)
 
-    col1, col2, col3 = st.columns(3)
+    col1, col2, col3 = st.columns(3, gap="medium")
 
     with col1:
-        st.image(original, caption="Original Image", use_container_width=True)
+        st.image(original, caption="Original Image", use_container_width=False, width=400)
 
     with col2:
-        st.image(overlay, caption="Segmentation Overlay", use_container_width=True)
+        st.image(overlay, caption="Segmentation Overlay", use_container_width=False, width=400)
 
     with col3:
         mask_rgb = cv2.cvtColor(mask, cv2.COLOR_GRAY2RGB)
-        st.image(mask_rgb, caption="AI Generated Mask", use_container_width=True)
+        st.image(mask_rgb, caption="AI Generated Mask", use_container_width=False, width=400)
 
 
 def render_diagnostic_report(results: Dict, config: Dict):
@@ -580,7 +580,7 @@ def render_enhanced_anomaly_section(enhanced_result: Dict, original_image: np.nd
 
             overlay = cv2.addWeighted(original_rgb, 0.6, heatmap, 0.4, 0)
             st.image(overlay, caption="Areas with potential issues highlighted in red/yellow",
-                    use_container_width=True)
+                    use_container_width=False, width=500)
         else:
             st.info("Heatmap visualization not available")
 
@@ -823,7 +823,7 @@ def main():
             render_diagnostic_report(results, config)
             render_export_section(results, image)
         else:
-            st.image(image, caption="Uploaded Image", use_container_width=True)
+            st.image(image, caption="Uploaded Image", use_container_width=False, width=600)
             st.info("👆 Click 'Run Analysis' in the sidebar to begin.")
     else:
         # Clear results if no file uploaded
